@@ -28,6 +28,18 @@ app.post('/user', (req, res) => {
     contact,
   };
 
+  const userEntries = Object.values(mockDb);
+
+  const contactEntryExists = userEntries.find(
+    (e) =>
+      e.contact.number === contact.number &&
+      e.contact.areaCode === contact.areaCode
+  );
+
+  if (contactEntryExists) {
+    res.status(400).send({});
+  }
+
   mockDb[_id] = user;
 
   res.status(200).send(user);
@@ -50,6 +62,18 @@ app.put('/user/:id', (req, res) => {
     address,
     contact,
   };
+
+  const userEntries = Object.values(mockDb);
+
+  const contactEntryExists = userEntries.find(
+    (e) =>
+      e.contact.number === contact.number &&
+      e.contact.areaCode === contact.areaCode
+  );
+
+  if (contactEntryExists && contactEntryExists._id !== _id) {
+    res.status(400).send({});
+  }
 
   mockDb[_id] = userUpdates;
 
