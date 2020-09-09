@@ -35,23 +35,26 @@ app.post('/user', (req, res) => {
 });
 
 app.put('/user/:id', (req, res) => {
-  res.status(200).send({
-    _id: 'KFG-734',
-    firstName: 'John',
-    lastName: 'Doe',
-    dob: '23/12/1989',
-    address: {
-      doorNumber: 1,
-      line1: 'new road',
-      line2: null,
-      postCode: 'NE7 3BF',
-    },
-    contact: {
-      country: 'GB',
-      areaCode: '+44',
-      number: '7121450602',
-    },
-  })
-})
+  const user = mockDb[req.params.id];
+
+  if (!user) {
+    res.status(404).send({});
+  }
+  const { firstName, lastName, dob, address, contact } = req.body;
+  const { _id } = user;
+
+  const userUpdates = {
+    _id,
+    firstName,
+    lastName,
+    dob,
+    address,
+    contact,
+  };
+
+  mockDb[_id] = userUpdates;
+
+  res.status(200).send(mockDb[_id]);
+});
 
 module.exports = app;

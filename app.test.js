@@ -125,7 +125,55 @@ describe(':app tests', () => {
   });
 
   describe(':update', () => {
+
+    it('Should not update a user that does not exist', async (done) => {
+
+      const anonymousId = 'KFG-734';
+      nanoid.mockImplementation(() => anonymousId);
+      // set up
+      await request(app)
+        .post('/user')
+        .send({
+          firstName: 'John',
+          lastName: 'Doe',
+          dob: '23/12/1989',
+          address: {
+            doorNumber: 1,
+            line1: 'something road',
+            line2: null,
+            postCode: 'NE7 3BF',
+          },
+          contact: {
+            country: 'GB',
+            areaCode: '+44',
+            number: '7121450602',
+          },
+        });
+
+      const res = await request(app)
+      .put('/user/KFG-missing')
+      .send({
+        firstName: 'John',
+        lastName: 'Doh',
+        dob: '23/12/1989',
+        address: {
+          doorNumber: 1,
+          line1: 'something road',
+          line2: 'another new line',
+          postCode: 'NE7 3BF',
+        },
+        contact: {
+          country: 'GB',
+          areaCode: '+44',
+          number: '7121450603',
+        },
+      });
+
+    expect(res.statusCode).toEqual(404);
+    done();
+    });
     it('Should update an existing user', async (done) => {
+      
       const anonymousId = 'KFG-734';
       const expectedUserData = {
         _id: anonymousId,
@@ -135,7 +183,7 @@ describe(':app tests', () => {
         address: {
           doorNumber: 1,
           line1: 'new road',
-          line2: null,
+          line2: 'another new line',
           postCode: 'NE7 3BF',
         },
         contact: {
@@ -173,8 +221,8 @@ describe(':app tests', () => {
           dob: '23/12/1989',
           address: {
             doorNumber: 1,
-            line1: 'something road',
-            line2: null,
+            line1: 'new road',
+          line2: 'another new line',
             postCode: 'NE7 3BF',
           },
           contact: {
