@@ -8,7 +8,6 @@ app.use(bodyParser.json());
 
 const mockDb = {};
 app.get('/user/:id', (req, res) => {
-  // res.send(commentsByPostId[req.params.id] || []);
   const user = mockDb[req.params.id];
   if (user) {
     res.status(200).send(user);
