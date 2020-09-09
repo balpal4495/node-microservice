@@ -236,6 +236,12 @@ describe(':app tests', () => {
   });
 
   describe('remove', () => {
+
+    it('Should return 404 if trying to remove a non existing user', async (done) => {
+      const res = await request(app).delete('/user/KFG-missing');
+      expect(res.statusCode).toEqual(404);
+      done();
+    });
     it('should remove a user from the db', async (done) => {
       // set up
       const anonymousId = 'KFG-734';
