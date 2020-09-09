@@ -6,8 +6,71 @@ jest.mock('nanoid');
 describe(':app tests', () => {
   describe(':get', () => {
     it('Should add not get data for an id that does not exist', async (done) => {
+      const expectedUserData = {
+        _id: 'KFG-734',
+        firstName: 'John',
+        lastName: 'Doe',
+        dob: '23/12/1989',
+        address: {
+          doorNumber: 1,
+          line1: 'something road',
+          line2: null,
+          postCode: 'NE7 3BF',
+        },
+        contact: {
+          country: 'GB',
+          areaCode: '+44',
+          number: '7121450602',
+        },
+      };
+
       const res = await request(app).get('/user/KFG-734');
       expect(res.statusCode).not.toEqual(200);
+      done();
+    });
+    it('Should get data for an id that does exist', async (done) => {
+      const anonymousId = 'KFG-734';
+      const expectedUserData = {
+        _id: anonymousId,
+        firstName: 'John',
+        lastName: 'Doe',
+        dob: '23/12/1989',
+        address: {
+          doorNumber: 1,
+          line1: 'something road',
+          line2: null,
+          postCode: 'NE7 3BF',
+        },
+        contact: {
+          country: 'GB',
+          areaCode: '+44',
+          number: '7121450602',
+        },
+      };
+      nanoid.mockImplementation(() => anonymousId);
+      // set up
+      await request(app)
+        .post('/user')
+        .send({
+          firstName: 'John',
+          lastName: 'Doe',
+          dob: '23/12/1989',
+          address: {
+            doorNumber: 1,
+            line1: 'something road',
+            line2: null,
+            postCode: 'NE7 3BF',
+          },
+          contact: {
+            country: 'GB',
+            areaCode: '+44',
+            number: '7121450602',
+          },
+        });
+
+      const res = await request(app).get('/user/KFG-734');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toEqual(expectedUserData);
       done();
     });
   });
@@ -37,6 +100,73 @@ describe(':app tests', () => {
 
       const res = await request(app)
         .post('/user')
+        .send({
+          firstName: 'John',
+          lastName: 'Doe',
+          dob: '23/12/1989',
+          address: {
+            doorNumber: 1,
+            line1: 'something road',
+            line2: null,
+            postCode: 'NE7 3BF',
+          },
+          contact: {
+            country: 'GB',
+            areaCode: '+44',
+            number: '7121450602',
+          },
+        });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toEqual(expectedUserData);
+
+      done();
+    });
+  });
+
+  describe(':update', () => {
+    it('Should update an existing user', async (done) => {
+      const anonymousId = 'KFG-734';
+      const expectedUserData = {
+        _id: anonymousId,
+        firstName: 'John',
+        lastName: 'Doe',
+        dob: '23/12/1989',
+        address: {
+          doorNumber: 1,
+          line1: 'new road',
+          line2: null,
+          postCode: 'NE7 3BF',
+        },
+        contact: {
+          country: 'GB',
+          areaCode: '+44',
+          number: '7121450602',
+        },
+      };
+      nanoid.mockImplementation(() => anonymousId);
+      // set up
+      await request(app)
+        .post('/user')
+        .send({
+          firstName: 'John',
+          lastName: 'Doe',
+          dob: '23/12/1989',
+          address: {
+            doorNumber: 1,
+            line1: 'something road',
+            line2: null,
+            postCode: 'NE7 3BF',
+          },
+          contact: {
+            country: 'GB',
+            areaCode: '+44',
+            number: '7121450602',
+          },
+        });
+
+      const res = await request(app)
+        .put('/user/KFG-734')
         .send({
           firstName: 'John',
           lastName: 'Doe',
