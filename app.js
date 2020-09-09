@@ -57,4 +57,13 @@ app.put('/user/:id', (req, res) => {
   res.status(200).send(mockDb[_id]);
 });
 
+app.delete('/user/:id', (req, res) => {
+  const user = mockDb[req.params.id];
+  if (!user) {
+    res.status(404).send({});
+  }
+  delete mockDb[req.params.id];
+  res.status(200).send('OK');
+});
+
 module.exports = app;
